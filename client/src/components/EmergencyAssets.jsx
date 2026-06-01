@@ -217,7 +217,7 @@ export default function EmergencyAssets({ files, onDelete, session }) {
       </div>
 
       {trustedContacts.length > 0 && (
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '2.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2.5rem' }}>
           <button 
             className="btn btn-primary" 
             onClick={() => setShowVerificationModal(true)}
