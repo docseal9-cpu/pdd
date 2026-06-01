@@ -178,7 +178,7 @@ export default function Auth() {
       {view === 'landing' ? (
         <div className="landing-page-simple animated">
           <nav className="landing-nav-simple">
-            <div className="landing-logo" style={{ position: 'absolute', left: '2rem', top: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1.25rem', fontWeight: '700', color: 'white' }}>
+            <div className="landing-logo">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
               DocSeal
             </div>
