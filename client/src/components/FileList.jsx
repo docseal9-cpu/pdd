@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import { useState, useRef } from 'react';
 import { supabase } from '../supabaseClient';
 import { decryptFile } from '../crypto';
 import { API_BASE } from '../config';
+import { Capacitor } from '@capacitor/core';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 
 export default function FileList({ files, onDelete, session, requirePasswordForDelete }) {
   const [pendingAction, setPendingAction] = useState(null); // { type: 'download' | 'delete' | 'secure-download', fileId: string, fileName: string }
@@ -36,7 +39,7 @@ export default function FileList({ files, onDelete, session, requirePasswordForD
       if (type === 'download') {
         await executeDecryptForPreview(fileId, fileName, recoveryPassword);
       } else if (type === 'secure-download') {
-        triggerBrowserDownload(previewFile.url, previewFile.name);
+        triggerBrowserDownload(previewFile.blob, previewFile.name);
         closePreview();
       }
       return;
@@ -89,7 +92,7 @@ export default function FileList({ files, onDelete, session, requirePasswordForD
         onDelete(actionToExecute.fileId);
       } else if (actionToExecute.type === 'secure-download') {
         // Second authentication passed, trigger actual download
-        triggerBrowserDownload(previewFile.url, previewFile.name);
+        triggerBrowserDownload(previewFile.blob, previewFile.name);
         closePreview();
       }
       
@@ -130,7 +133,8 @@ export default function FileList({ files, onDelete, session, requirePasswordForD
         name: fileName,
         type: mimeType,
         fileId,
-        cachedPassword: password // Storing for future if needed, though we challenge again
+        cachedPassword: password, // Storing for future if needed, though we challenge again
+        blob: typedBlob
       });
       
     } catch (error) {
@@ -139,13 +143,42 @@ export default function FileList({ files, onDelete, session, requirePasswordForD
     }
   };
 
-  const triggerBrowserDownload = (url, fileName) => {
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+  const triggerBrowserDownload = async (blob, fileName) => {
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const buffer = await blob.arrayBuffer();
+        let binary = '';
+        const bytes = new Uint8Array(buffer);
+        const len = bytes.byteLength;
+        for (let i = 0; i < len; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        const base64Data = window.btoa(binary);
+        
+        const result = await Filesystem.writeFile({
+          path: fileName,
+          data: base64Data,
+          directory: Directory.Documents
+        });
+        
+        await Share.share({
+          title: fileName,
+          url: result.uri
+        });
+      } catch (e) {
+        console.error('Save error', e);
+        alert('Failed to save file to device');
+      }
+    } else {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }
   };
 
   const closePreview = () => {
