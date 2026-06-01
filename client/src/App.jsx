@@ -86,6 +86,89 @@ function VaultDashboard({ session }) {
   );
 }
 
+function SecurityWrapper({ children }) {
+  const [shieldActive, setShieldActive] = useState(false);
+  const [shieldMessage, setShieldMessage] = useState("");
+
+  useEffect(() => {
+    // 1. Inactivity Tracker (5 min = 300,000 ms)
+    let inactivityTimer;
+    const resetTimer = () => {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(async () => {
+        sessionStorage.removeItem('recoveryPassword');
+        await supabase.auth.signOut();
+      }, 300000); // 5 minutes
+    };
+
+    const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    activityEvents.forEach(e => window.addEventListener(e, resetTimer));
+    resetTimer();
+
+    // 2. Tab Visibility & Focus Loss Shield
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setShieldMessage("Screen Protected");
+        setShieldActive(true);
+      } else {
+        setShieldActive(false);
+      }
+    };
+    
+    const handleBlur = () => {
+      setShieldMessage("Screen Protected");
+      setShieldActive(true);
+    };
+    const handleFocus = () => setShieldActive(false);
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("blur", handleBlur);
+    window.addEventListener("focus", handleFocus);
+
+    // 3. PrintScreen & Shortcut Interceptor
+    const handleKeyCapture = (e) => {
+      if (
+        e.key === 'PrintScreen' || 
+        (e.metaKey && e.shiftKey && ['3', '4', '5', 's', 'S'].includes(e.key)) ||
+        (e.ctrlKey && e.shiftKey && ['s', 'S'].includes(e.key))
+      ) {
+        navigator.clipboard.writeText('Security Policy: Screenshots Disabled').catch(() => {});
+        setShieldMessage("Screenshot Blocked");
+        setShieldActive(true);
+        setTimeout(() => setShieldActive(false), 2500);
+      }
+    };
+    window.addEventListener('keyup', handleKeyCapture);
+    window.addEventListener('keydown', handleKeyCapture);
+
+    // 4. Anti-ContextMenu
+    const handleContextMenu = (e) => e.preventDefault();
+    window.addEventListener('contextmenu', handleContextMenu);
+
+    return () => {
+      clearTimeout(inactivityTimer);
+      activityEvents.forEach(e => window.removeEventListener(e, resetTimer));
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("blur", handleBlur);
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener('keyup', handleKeyCapture);
+      window.removeEventListener('keydown', handleKeyCapture);
+      window.removeEventListener('contextmenu', handleContextMenu);
+    };
+  }, []);
+
+  return (
+    <>
+      <div className={`screen-shield ${shieldActive ? 'active' : ''}`}>
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '1rem' }}><rect width="18" height="11" x="3" y="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <h2 style={{ fontSize: '2rem', fontWeight: 'bold' }}>{shieldMessage}</h2>
+        <p style={{ marginTop: '0.5rem', color: '#fca5a5' }}>Content hidden for security purposes.</p>
+      </div>
+      {children}
+    </>
+  );
+}
+
 function App() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -126,11 +209,13 @@ function App() {
 
   return (
     <Router>
-      {!session ? (
-        <Auth />
-      ) : (
-        <VaultDashboard session={session} />
-      )}
+      <SecurityWrapper>
+        {!session ? (
+          <Auth />
+        ) : (
+          <VaultDashboard session={session} />
+        )}
+      </SecurityWrapper>
     </Router>
   );
 }
