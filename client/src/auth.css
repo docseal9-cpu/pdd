@@ -27,11 +27,12 @@
 .auth-header {
   font-size: 2rem;
   font-weight: 800;
-  color: #fff;
   margin-bottom: 2rem;
-  background: linear-gradient(135deg, #fff, #94a3b8);
+  background: linear-gradient(90deg, #06b6d4, #8b5cf6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  color: #06b6d4;
+  line-height: 1.2;
 }
 
 /* Avatar Upload Circle */
