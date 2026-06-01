@@ -197,16 +197,14 @@ export default function Auth() {
               Total privacy.
             </p>
             <div className="hero-cta-group-simple">
-              <button className="btn btn-primary btn-large" onClick={() => { setView('signup'); setError(null); }}>
+              <button className="btn btn-primary" onClick={() => { setView('signup'); setError(null); }}>
                 Create Your Vault
               </button>
-              <button className="btn btn-outline btn-large" onClick={() => setView('signin')}>
+              <button className="btn btn-outline" style={{ background: 'rgba(255,255,255,0.05)' }} onClick={() => setView('signin')}>
                 Login to Vault
               </button>
-            </div>
-            <div style={{ marginTop: '2rem', textAlign: 'center' }}>
-              <button className="auth-link" style={{ color: '#94a3b8', fontSize: '0.95rem' }} onClick={() => setView('recover')}>
-                Lost access? <span style={{ color: '#6366f1' }}>Recover Emergency Vault</span>
+              <button className="btn btn-outline" style={{ borderColor: 'rgba(239, 68, 68, 0.4)', color: '#fca5a5' }} onClick={() => setView('recover')}>
+                Recover Emergency Vault
               </button>
             </div>
           </main>
