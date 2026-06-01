@@ -189,6 +189,8 @@ body {
   display: flex;
   align-items: center;
   gap: 1rem;
+  min-width: 0;
+  flex: 1;
 }
 
 .file-icon {
@@ -203,10 +205,17 @@ body {
   font-size: 1.2rem;
 }
 
+.file-details {
+  min-width: 0;
+  overflow: hidden;
+}
+
 .file-details h4 {
   font-weight: 500;
   margin-bottom: 0.2rem;
-  word-break: break-all;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .file-details p {

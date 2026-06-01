@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import Auth from './components/Auth';
 import Sidebar from './components/Sidebar';
 import logo from './assets/logo.png';
@@ -60,7 +60,13 @@ function VaultDashboard({ session }) {
           <Route path="/profile" element={<Profile session={session} />} />
           <Route path="/ingestion" element={
             <>
-              <h2 className="page-header">Secure Ingestion</h2>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <h2 className="page-header" style={{ marginBottom: 0 }}>Secure Ingestion</h2>
+                <Link to="/archives" className="btn btn-outline-cyan" style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem', gap: '0.25rem' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  Close
+                </Link>
+              </div>
               <Uploader onUploadComplete={handleUploadComplete} session={session} />
             </>
           } />
