@@ -36,28 +36,34 @@ app.post('/api/recovery-payload', async (req, res) => {
 
         // --- Identity Verification ---
         const trustedContacts = user.user_metadata?.trusted_contacts || [];
-        if (trustedContacts.length < 2) {
-             return res.status(400).json({ error: 'Vault does not have enough trusted contacts configured.' });
-        }
-
-        if (!contact1 || !contact2) {
-             return res.status(400).json({ error: 'Both contact identities are required for verification.' });
+        if (trustedContacts.length === 0) {
+             return res.status(400).json({ error: 'Vault does not have any trusted contacts configured.' });
         }
 
         const normalizePhone = (p) => (p || '').replace(/[\s\-\(\)\+]/g, ''); // strip spaces and common symbols
         const normalizeName = (n) => (n || '').trim().toLowerCase().replace(/\s+/g, ' ');
 
         const verifyContact = (input, registered) => {
+            if (!input || !registered) return false;
             return normalizeName(input.name) === normalizeName(registered.name) && 
                    (input.email || '').trim().toLowerCase() === (registered.email || '').trim().toLowerCase() && 
                    normalizePhone(input.phone) === normalizePhone(registered.phone);
         };
 
-        const matchForward = verifyContact(contact1, trustedContacts[0]) && verifyContact(contact2, trustedContacts[1]);
-        const matchReverse = verifyContact(contact1, trustedContacts[1]) && verifyContact(contact2, trustedContacts[0]);
+        let isVerified = false;
 
-        if (!matchForward && !matchReverse) {
-            return res.status(403).json({ error: 'Identity Verification Failed. The provided names, emails, or phone numbers do not exactly match the registered trusted contacts.' });
+        if (trustedContacts.length === 1) {
+            // Only one contact configured, check if either input matches it
+            isVerified = verifyContact(contact1, trustedContacts[0]) || verifyContact(contact2, trustedContacts[0]);
+        } else if (trustedContacts.length >= 2) {
+            // Two contacts configured, both must match
+            const matchForward = verifyContact(contact1, trustedContacts[0]) && verifyContact(contact2, trustedContacts[1]);
+            const matchReverse = verifyContact(contact1, trustedContacts[1]) && verifyContact(contact2, trustedContacts[0]);
+            isVerified = matchForward || matchReverse;
+        }
+
+        if (!isVerified) {
+            return res.status(403).json({ error: 'Identity Verification Failed. The provided details do not exactly match the registered trusted contacts.' });
         }
         // -----------------------------
 

@@ -360,18 +360,18 @@ export default function Auth() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '0.75rem' }}>
                     <div>
                       <label className="form-label" style={{ fontSize: '0.8rem' }}>Name</label>
-                      <input className="input-field" value={contact2Name} onChange={(e) => setContact2Name(e.target.value)} required />
+                      <input className="input-field" value={contact2Name} onChange={(e) => setContact2Name(e.target.value)} />
                     </div>
                     <div>
                       <label className="form-label" style={{ fontSize: '0.8rem' }}>Email</label>
-                      <input className="input-field" type="email" value={contact2Email} onChange={(e) => setContact2Email(e.target.value)} required />
+                      <input className="input-field" type="email" value={contact2Email} onChange={(e) => setContact2Email(e.target.value)} />
                     </div>
                     <div style={{ gridColumn: '1 / -1' }}>
                       <label className="form-label" style={{ fontSize: '0.8rem' }}>Phone</label>
-                      <input className="input-field" type="tel" value={contact2Phone} onChange={(e) => setContact2Phone(e.target.value)} required />
+                      <input className="input-field" type="tel" value={contact2Phone} onChange={(e) => setContact2Phone(e.target.value)} />
                     </div>
                   </div>
-                  <label className="form-label">Contact #2 Emergency Code (Access Token)</label>
+                  <label className="form-label">Contact #2 Emergency Code (Optional)</label>
                   <input
                     type="password"
                     className="input-field"
@@ -379,7 +379,6 @@ export default function Auth() {
                     value={recoveryCode2}
                     onChange={(e) => setRecoveryCode2(e.target.value)}
                     style={{ fontFamily: 'monospace' }}
-                    required
                   />
                   <p style={{ color: '#fca5a5', fontSize: '0.85rem', marginTop: '0.5rem' }}>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px', verticalAlign: '-1px' }}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"></path></svg>
