@@ -722,8 +722,8 @@ body {
 }
 
 .landing-logo-img {
-  width: 48px;
-  height: 48px;
+  width: 64px;
+  height: 64px;
   border-radius: 10px;
   object-fit: cover;
 }
@@ -1070,8 +1070,8 @@ body {
     margin-bottom: 2rem;
   }
   .landing-logo-img {
-    width: 90px;
-    height: 90px;
+    width: 120px;
+    height: 120px;
     border-radius: 16px;
     margin-bottom: 0.25rem;
   }
