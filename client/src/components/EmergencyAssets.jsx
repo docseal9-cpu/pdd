@@ -353,7 +353,7 @@ export default function EmergencyAssets({ files, onDelete, session }) {
       )}
 
       {/* Reusing the FileList for Emergency Assets */}
-      <FileList files={files} onDelete={onDelete} session={session} />
+      <FileList files={files} onDelete={onDelete} session={session} requirePasswordForDelete={true} />
     </div>
   );
 }

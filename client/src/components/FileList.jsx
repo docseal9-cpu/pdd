@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { decryptFile } from '../crypto';
 
-export default function FileList({ files, onDelete, session }) {
+export default function FileList({ files, onDelete, session, requirePasswordForDelete }) {
   const [pendingAction, setPendingAction] = useState(null); // { type: 'download' | 'delete' | 'secure-download', fileId: string, fileName: string }
   const [verifyPassword, setVerifyPassword] = useState('');
   const [verifyError, setVerifyError] = useState(null);
@@ -29,7 +29,8 @@ export default function FileList({ files, onDelete, session }) {
 
   const initiateAction = async (type, fileId, fileName) => {
     const recoveryPassword = sessionStorage.getItem('recoveryPassword');
-    if (recoveryPassword) {
+    
+    if (recoveryPassword && !(type === 'delete' && requirePasswordForDelete)) {
       if (type === 'download') {
         await executeDecryptForPreview(fileId, fileName, recoveryPassword);
       } else if (type === 'delete') {
