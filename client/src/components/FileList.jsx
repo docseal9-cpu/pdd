@@ -38,10 +38,8 @@ export default function FileList({ files, onDelete, session, requirePasswordForD
     // 1. View / Decrypt (type === 'download') -> bypasses prompt
     // 2. Secure Download (type === 'secure-download') -> bypasses prompt
     // 3. Delete (type === 'delete') -> falls through to prompt for password!
-    if (isEmergencyVault) {
-      if (!recoveryPassword) {
-        alert("DEBUG: We are in Emergency Vault, but the recovery password is gone from memory! Did you close and reopen the app? You must log in again to view files without a prompt.");
-      } else if (type === 'download' || type === 'secure-download') {
+    if (recoveryPassword) {
+      if (type === 'download' || type === 'secure-download') {
         const action = { type, fileId, fileName };
         // Do not set pendingAction so modal never flickers
         handleVerificationSubmit(null, recoveryPassword, action, true);
