@@ -114,7 +114,8 @@ export default function Uploader({ onUploadComplete, session }) {
 
   const uploadFile = async (encryptedBlob, originalName, originalType) => {
     const formData = new FormData();
-    formData.append('file', encryptedBlob, originalName);
+    const typedBlob = new Blob([encryptedBlob], { type: originalType });
+    formData.append('file', typedBlob, originalName);
     formData.append('is_emergency', isEmergency);
 
     try {

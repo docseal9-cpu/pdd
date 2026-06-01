@@ -56,6 +56,15 @@ export default function FileList({ files, onDelete, session, requirePasswordForD
     setVerifyError(null);
   };
 
+  const getMimeTypeFromName = (filename, defaultType) => {
+    const ext = filename.split('.').pop().toLowerCase();
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext)) return `image/${ext === 'jpg' ? 'jpeg' : ext}`;
+    if (ext === 'pdf') return 'application/pdf';
+    if (['txt', 'csv', 'md'].includes(ext)) return 'text/plain';
+    if (ext === 'json') return 'application/json';
+    return defaultType;
+  };
+
   const handleVerificationSubmit = async (e) => {
     e.preventDefault();
     setIsVerifying(true);
@@ -119,9 +128,12 @@ export default function FileList({ files, onDelete, session, requirePasswordForD
       // 2. Client-Side Decryption
       const decryptedBlob = await decryptFile(encryptedBuffer, password);
       
-      // 3. Find MIME type from original files list
+      // 3. Find MIME type from original files list or filename
       const fileRecord = files.find(f => f.id === fileId);
-      const mimeType = fileRecord ? fileRecord.mimeType : 'application/octet-stream';
+      let mimeType = fileRecord ? fileRecord.mimeType : 'application/octet-stream';
+      if (!mimeType || mimeType === 'application/octet-stream') {
+        mimeType = getMimeTypeFromName(fileName, mimeType);
+      }
       
       // We must explicitly set the correct type so the browser knows how to preview it
       const typedBlob = new Blob([decryptedBlob], { type: mimeType });
