@@ -1042,52 +1042,63 @@ body {
 
 @media (max-width: 768px) {
   .dashboard-container {
-    flex-direction: column-reverse;
+    flex-direction: column;
+    padding-bottom: 70px; /* Space for fixed bottom nav */
   }
   .sidebar {
     width: 100%;
-    height: auto;
-    padding: 0.5rem;
+    height: 70px;
+    padding: 0.5rem 1rem;
     flex-direction: row;
-    border-right: none;
-    border-top: 1px solid var(--card-border);
-    justify-content: space-around;
-    z-index: 100;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(17, 20, 28, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    justify-content: space-between;
+    z-index: 999;
+    position: fixed;
+    bottom: 0;
+    left: 0;
   }
   .sidebar-header {
     display: none;
   }
   .sidebar-nav {
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
+    align-items: center;
     width: 100%;
     gap: 0;
   }
   .nav-item {
-    flex-direction: column;
-    padding: 0.5rem;
-    font-size: 0.75rem;
-    gap: 0.25rem;
-    border-radius: 8px;
+    flex-direction: row;
+    padding: 0.75rem;
+    border-radius: 12px;
     justify-content: center;
-    width: 100%;
-    text-align: center;
+    align-items: center;
+    width: auto;
+    border: none !important;
+  }
+  .nav-item span {
+    display: none; /* Hide text on mobile for clean icon look */
+  }
+  .nav-item svg {
+    margin: 0;
+    width: 24px;
+    height: 24px;
   }
   .nav-item.active {
-    border-left: none;
-    border-bottom: 3px solid var(--accent);
-    border-radius: 8px 8px 0 0;
-    background: transparent;
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(139, 92, 246, 0.15));
+    color: #06b6d4;
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
   }
   .sidebar > div:last-child {
-    margin-top: 0 !important;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 25%;
   }
   .main-content {
-    padding: 1.5rem 1rem;
+    padding: 1.5rem 1rem 2rem 1rem;
   }
   .file-item {
     flex-direction: column;
